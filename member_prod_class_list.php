@@ -23,20 +23,20 @@
           <td>商品分類1</td>
           <td>2021-10-11 19:27:14</td>
           <td>2021-10-15 19:27:14</td>
-          <td><a href="member_prod_class_add.php">新增</a> <a href="member_prod_class_edit.php">編輯</a></td>
+          <td><a href="member_prod_class_add.php">新增</a> <a href="member_prod_class_edit.php">編輯</a> <a href="#">刪除</a></td>
         </tr>
         <tr>
           <th scope="row">2</th>
           <td>商品分類1</td>
           <td>2021-10-11 19:27:14</td>
           <td>2021-10-15 19:27:14</td>
-          <td><a href="member_prod_class_add.php">新增</a> <a href="member_prod_class_edit.php">編輯</a></td>
+          <td><a href="member_prod_class_add.php">新增</a> <a href="member_prod_class_edit.php">編輯</a> <a href="#">刪除</a></td>
         </tr>    <tr>
           <th scope="row">3</th>
           <td>商品分類1</td>
           <td>2021-10-11 19:27:14</td>
           <td>2021-10-15 19:27:14</td>
-          <td><a href="member_prod_class_add.php">新增</a> <a href="member_prod_class_edit.php">編輯</a></td>
+          <td><a href="member_prod_class_add.php">新增</a> <a href="member_prod_class_edit.php">編輯</a> <a href="#">刪除</a></td>
         </tr>
 
       </tbody>

@@ -14,7 +14,7 @@
     </head>
     <body>
 
-    <div class="container">
+    <div class="container-xl">
         <div class="row bg-primary text-white shadow">
             <div class="col-8 card-body">
                 <a class="text-white" href="index.php">首頁</a>

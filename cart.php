@@ -6,6 +6,7 @@
         <tr>
         <th scope="col">#</th>
         <th scope="col">商品名稱</th>
+        <th scope="col">規格</th>
         <th scope="col">數量</th>
         <th scope="col">金額</th>
         <th scope="col">刪除</th>
@@ -14,7 +15,8 @@
     <tbody>
         <tr>
             <th scope="row">1</th>
-            <td>Mark</td>
+            <td>pro1</td>
+            <td></td>
             <td>
                 <div class="form-group">
                     <select class="form-control" id="exampleFormControlSelect1">
@@ -34,7 +36,8 @@
 
         <tr>
             <th scope="row">2</th>
-            <td>Mark</td>
+            <td>pro2</td>
+            <td>顏色: 紅</td>
             <td>
                 <div class="form-group">
                     <select class="form-control" id="exampleFormControlSelect1">
@@ -54,7 +57,8 @@
 
         <tr>
             <th scope="row">3</th>
-            <td>Mark</td>
+            <td>pro3</td>
+            <td>顏色: 紅<br>尺寸: 大</td>
             <td>
                 <div class="form-group">
                     <select class="form-control" id="exampleFormControlSelect1">
