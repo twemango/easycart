@@ -1,27 +1,24 @@
 <?php
 include_once("include/session.php");
 include_once("function/common.php");
-include_once("class/pdo/Db.class.php");
+include_once("class/member.php");
 
 if (isset($_POST['account'])) {
-    $_SESSION['temp_account'] = $_POST['account'];
+    $account = $_POST['account'];
 } else {
-    $_SESSION['temp_account'] = null;
+    $account = '';
 }
 
 if (isset($_POST['password'])) {
-    $_SESSION['temp_password'] =  $_POST['password'];
+    $password = $_POST['password'];
 } else {
-    $_SESSION['temp_password'] = null;
+    $password = '';
 }
 
 $error = False;
 $error_text = '';
 
-if (isset($_POST['account']) && isset($_POST['password'])) {
-	$account = $_POST['account'];
-  	$password = $_POST['password'];
-
+if (!empty($account) && !empty($password)) {
     if (!preg_match("/^[a-zA-Z0-9]{3,20}$/", $account)) {
         $error = True;
         $error_text = '帳號長度3~20字元之間，格式必須為大小寫英文、數字';
@@ -31,17 +28,14 @@ if (isset($_POST['account']) && isset($_POST['password'])) {
     }
 
     if (!$error) {
-        $db = new Db();
-        $db->bindMore(array("ac"=>$account, "pw"=>$password));
-        $user_arr = $db->query("SELECT id FROM finder_user WHERE ac = :ac AND pw = :pw");
+        $member = new Member();
+        $user_arr = $member->login($account, $password);
         //echo '<pre>user_arr'.print_r($user_arr, 1).'</pre>';
 
         if ($user_arr) {
             $uid = $user_arr[0]['id'];
-            //echo "uid=[{$uid}]";
+            //echo "uid=[$uid]";
             $_SESSION['uid'] = $uid;
-            unset($_SESSION['temp_account']);
-            unset($_SESSION['temp_password']);
             header("Location: index.php");
         } else {
             $error = True;
@@ -64,15 +58,18 @@ if (isset($_POST['account']) && isset($_POST['password'])) {
 
         <div class="form-group">
             <label for="formGroupExampleInput">帳號</label>
-            <input type="text" class="form-control" id="formGroupExampleInput" name="account" value="<?php echo display($_SESSION['temp_account']); ?>" placeholder="輸入帳號">
+            <input type="text" class="form-control" id="account" name="account" value="" placeholder="輸入帳號">
         </div>
         <div class="form-group">
             <label for="exampleInputPassword1">密碼</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" name="password" value="<?php echo display($_SESSION['temp_password']); ?>" placeholder="輸入密碼">
+            <input type="password" class="form-control" id="password" name="password" value="" placeholder="輸入密碼">
         </div>
         <button type="submit" class="btn btn-primary">送出</button>
         </form>
     </div>
 </div>
-
+<script>
+$('#account').val('<?php echo display($account); ?>');
+$('#password').val('<?php echo display($password); ?>');
+</script>
 <?php include_once("include/footer.php"); ?>
