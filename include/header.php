@@ -23,8 +23,11 @@
                 <a class="text-white" href="member_order_list.php">會員-訂單</a>
             </div>
             <div class="col-4 card-body text-right">
+                <?php if (!isset($_SESSION['uid'])) { ?>
                 <a class="text-white" href="login.php">登入</a>
-                <a class="text-white" href="#">登出</a>
+                <?php } else { ?>
+                <a class="text-white" href="logout.php">登出</a>
+                <?php } ?>
             </div>
         </div>
 
