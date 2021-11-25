@@ -23,52 +23,52 @@
         </div>
         <div class="col-3 card-body"></div>
 
-        
         <!-- 商品名稱 -->
         <h2>商品名稱</h2>
         <!-- 商品價格 -->
-        <div>商品價格: 5678</div>
-        <div>庫存數量: 8</div>
-        <form>
-        <!-- 商品數量_start -->
-        <div class="form-group">
-            <label for="exampleFormControlSelect1">購買數量</label>
-            <select class="form-control" id="exampleFormControlSelect1">
-            <option value="op" selected>1</option>
-            <option value="op">2</option>
-            <option value="op">3</option>
-            </select>
+        <h3>NT$1200</h3>
+        <form>    
+        <!-- 商品規格_start -->
+        <div class="form-group row">
+            <label for="exampleFormControlSelect1" class="col-sm-2 col-form-label">顏色</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="exampleFormControlSelect1">
+                    <option value="op" selected>紅</option>
+                    <option value="op">綠</option>
+                    <option value="op">藍</option>
+                </select>
+            </div>
         </div>
 
-        <!-- 商品數量_end -->
-        <!-- 商品規格_start -->
-        <div style="margin-top:20px">商品規格</div>
-        <div class="form-group">
-            <label for="exampleFormControlSelect1">顏色</label>
-            <select class="form-control" id="exampleFormControlSelect1">
-            <option value="op" selected>紅</option>
-            <option value="op">綠</option>
-            <option value="op">藍</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="exampleFormControlSelect1">尺寸</label>
-            <select class="form-control" id="exampleFormControlSelect1">
-            <option value="op" selected>大</option>
-            <option value="op">中</option>
-            <option value="op">小</option>
-            </select>
+        <div class="form-group row">
+            <label for="exampleFormControlSelect2" class="col-sm-2 col-form-label">尺寸</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="exampleFormControlSelect2">
+                    <option value="op" selected>大</option>
+                    <option value="op">中</option>
+                    <option value="op">小</option>
+                </select>
+            </div>
         </div>
         <!-- 商品規格_end -->
+
+        <!-- 購買數量_start -->
+        <div class="form-group row">
+            <label for="exampleFormControlSelect3" class="col-sm-2 col-form-label">購買數量</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="exampleFormControlSelect3">
+                    <option value="op" selected>1</option>
+                    <option value="op">2</option>
+                    <option value="op">3</option>
+                </select>
+            </div>
+        </div>
+        <!-- 購買數量_end -->
 
         <button style="margin-top:20px" type="submit" class="btn btn-primary">購買</button>
         </form>
 
     </div>
-
-
-
 </div>
-
 
 <?php include_once("include/footer.php"); ?>
