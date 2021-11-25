@@ -52,7 +52,6 @@ if (isset($_POST['account']) && isset($_POST['password'])) {
 ?>
 
 <?php include_once("include/header.php"); ?>
-
 <div class="row shadow">
     <div class="col-12 card-body">
         <form action="login.php" method="post">
