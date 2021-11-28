@@ -2,7 +2,9 @@
 function convertUrlQuery ($url) {
   $res = parse_url($url);
 
-  if (!$res['query']) return [];
+  //if (!$res['query']) return [];
+  if (!isset($res['query'])) return [];
+
 
   $query = explode('&', $res['query']);
 

@@ -26,6 +26,24 @@ Class Member
         $user_arr = $this->db->query("SELECT id FROM finder_user WHERE ac = :ac AND pw = :pw");
         return $user_arr;
     }
+
+    /**
+     * 取得會員ID
+     *
+     * @param integer $uid  帳號id
+     * @return integer
+     */
+    public function getMemberId($uid)
+    {
+        $this->db->bindMore(array("uid"=>$uid));
+        $member_arr = $this->db->query("SELECT id FROM finder_user_member WHERE uid = :uid");
+        if ($member_arr) {
+            $mid = (int)$member_arr[0]['id'];
+        } else {
+            $mid = 0;
+        }
+        return $mid;
+    }
     
 } 
 ?>

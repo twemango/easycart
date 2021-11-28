@@ -36,6 +36,7 @@ if (!empty($account) && !empty($password)) {
             $uid = $user_arr[0]['id'];
             //echo "uid=[$uid]";
             $_SESSION['uid'] = $uid;
+            $_SESSION['mid'] = $member->getMemberId($uid);
             header("Location: index.php");
         } else {
             $error = True;
@@ -58,18 +59,14 @@ if (!empty($account) && !empty($password)) {
 
         <div class="form-group">
             <label for="formGroupExampleInput">帳號</label>
-            <input type="text" class="form-control" id="account" name="account" value="" placeholder="輸入帳號">
+            <input type="text" class="form-control" id="account" name="account" value="<?php echo display($account); ?>" placeholder="輸入帳號">
         </div>
         <div class="form-group">
             <label for="exampleInputPassword1">密碼</label>
-            <input type="password" class="form-control" id="password" name="password" value="" placeholder="輸入密碼">
+            <input type="password" class="form-control" id="password" name="password" value="<?php echo display($password); ?>" placeholder="輸入密碼">
         </div>
         <button type="submit" class="btn btn-primary">送出</button>
         </form>
     </div>
 </div>
-<script>
-$('#account').val('<?php echo display($account); ?>');
-$('#password').val('<?php echo display($password); ?>');
-</script>
 <?php include_once("include/footer.php"); ?>

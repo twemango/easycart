@@ -1,74 +1,245 @@
+<?php
+include_once("include/session.php");
+include_once("function/common.php");
+include_once("class/product.php");
+include_once('class/pagination.php');
+
+$product = new Product();
+$categories = $product->getCategories();
+//echo '<pre>categories'.print_r($categories, 1).'</pre>';
+
+if ($categories) {
+    if (isset($_GET['cname'])) {
+        $cname = $_GET['cname'];
+    } else {
+        $cname = $categories[0]['name'];
+        //echo "id=[$id]";
+    }
+
+    if (isset($_GET['id'])) {
+        $pid = (int)$_GET['id'];
+    } else {
+        $pid = 0;
+    }
+
+    if (isset($_POST['buycount'])) {
+        $buycount = (int)$_POST['buycount'];
+    } else {
+        $buycount = 1;
+    }
+
+    $pro = $product->getProduct($pid);
+    //echo '<pre>pro'.print_r($pro,1).'</pre>';
+
+    /* 庫存量判斷_start */
+    $buy_text = '';
+    $alert_class = 'alert-warning';
+    if (!empty($_POST)) {
+        //echo '<pre>_POST'.print_r($_POST, 1).'</pre>';//exit;
+        if ($pro['shop_spec_mode'] == 0) { // 商品規格:單一種類
+            // 購物車內本商品的庫存量
+            $total_buycount = $buycount;
+            $newpro_flag = True;
+            if (isset($_SESSION['cart'])) {
+                foreach ($_SESSION['cart'] as $key => $val) {
+                    if ($val['id'] == $pid) {
+                        // 相同商品數量相加
+                        $total_buycount += $val['count'];
+                        $newpro_flag = False;
+                        break;
+                    }
+                }
+            }
+
+            if ($pro['shop_stock'] >= $total_buycount) {
+                if ($newpro_flag) {
+                    //$_SESSION['cart'][] = array ('id'=>$pro['id'], 'count'=>$buycount);
+                    $_SESSION['cart'][] = array (
+                        'id' => $pro['id'], 
+                        'name' => $pro['shop_name'], 
+                        'price' => $pro['shop_price'], 
+                        'count' => $buycount
+                    );
+                    //echo '<pre>sess_cart'.print_r($_SESSION['cart'], 1).'</pre>';//exit;
+                } else {
+                    $_SESSION['cart'][$key]['count'] = $total_buycount;
+                }
+                $buy_text = '<strong>' . $pro['shop_name'] . '</strong> 已加入購物車！';
+            } else {
+                $alert_class = 'alert-danger';
+                $buy_text = '商品購買數量超過庫存量';
+            }
+        } elseif ($pro['shop_spec_mode'] == 1) { // 商品規格:多規格
+            // 購物車內本商品的庫存量
+            $total_buycount = $buycount;
+            $newpro_flag = True;
+
+            //$specs = $product->getProductSpec($pid);
+            //$pro['spec'] = $product->getProductSpec($pid);
+            //echo '<pre>pro'.print_r($pro, 1).'</pre>';//exit;
+            //$specs = $product->getProductSpec($pid);
+
+            if (isset($_SESSION['cart'])) {
+                foreach ($_SESSION['cart'] as $key => $val) {
+                    if ($val['id'] == $pid) {
+                        // 相同商品數量相加
+                        $total_buycount += $val['count'];
+                        $newpro_flag = False;
+                        break;
+                    }
+                }
+            }
+
+            if ($pro['shop_stock'] >= $total_buycount) {
+                if ($newpro_flag) {
+                    $_SESSION['cart'][] = array ('id'=>$pro['id'], 'count'=>$buycount);
+                    //echo '<pre>sess_cart'.print_r($_SESSION['cart'], 1).'</pre>';//exit;
+                } else {
+                    $_SESSION['cart'][$key]['count'] = $total_buycount;
+                }
+                $buy_text = '<strong>' . $pro['shop_name'] . '</strong> 已加入購物車！';
+            } else {
+                $alert_class = 'alert-danger';
+                $buy_text = '商品購買數量超過庫存量';
+            }
+        }
+        
+    }
+    /* 庫存量判斷_end */
+
+    /* 購物按鈕判斷(商品規格:單一種類)_start */
+    $buy_flag = True;
+    $option_count = 10;
+    if ($pro['shop_stock'] < $option_count) {
+        $option_count = $pro['shop_stock'];
+    }
+
+    if ($pro['shop_stock'] <= 0) {
+        $buy_flag = False;
+    } elseif (isset($_SESSION['cart'])) {
+        foreach ($_SESSION['cart'] as $key => $val) {
+            if ($val['id'] == $pid) {
+                // 購物車數量等於庫存量
+                if ($val['count'] == $pro['shop_stock']) {
+                    $buy_flag = False;
+                }
+                $option_count = (int)($option_count-(int)$val['count']);
+                break;
+            }
+        }
+    }
+    /* 購物按鈕判斷(商品規格:單一種類)_end */
+
+    if (isImage('upload/images/' . $pro['shop_image'])) {
+        $image = 'upload/images/' . $pro['shop_image'];
+    } else {
+        $image = 'images/no_image.png';
+    }
+
+    $specs = $product->getProductSpec($pid);
+    //echo '<pre>product_spec'.print_r($pro['spec'], 1).'</pre>';exit;
+/*
+    if (isset($pro['spec'])) {
+        $order_spec = 0;
+        foreach ($pro['spec'] as $key => $val) {
+            
+            if ($val['order_spec'] == $order_spec) { // 同規格
+                // 相同商品數量相加
+                $total_buycount += $val['count'];
+                $newpro_flag = False;
+                break;
+            }
+            $order_spec = $val['order_spec'];
+        }
+    }
+*/
+    //echo '<pre>sess'.print_r($_SESSION, 1).'</pre>';
+}
+
+?>
+
 <?php include_once("include/header.php"); ?>
+<link href="css/pagination.css" rel="stylesheet">
 
 <div class="row shadow">
     <div class="col-4 card-body">
-
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">商品列表</h6>
+    <?php if ($categories) { ?>
+        <div class="card mb-4">
+            <div class="list-group">
+            <?php foreach ($categories as $ca) { ?>
+                <?php if ($ca['name'] == $cname) { ?>
+                    <a href="prod_class.php?cname=<?php echo urlencode($ca['name']); ?>" class="list-group-item list-group-item-action active"><?php echo display($ca['name']); ?></a>
+                <?php } else { ?>
+                    <a href="prod_class.php?cname=<?php echo urlencode($ca['name']); ?>" class="list-group-item list-group-item-action"><?php echo display($ca['name']); ?></a>
+                <?php } ?>
+            <?php } ?>
             </div>
-
-            <ul class="list-group">
-                <li class="list-group-item active">商品列表1</li>
-                <li class="list-group-item">商品列表2</li>
-                <li class="list-group-item">商品列表3</li>
-            </ul>
         </div>
-    
+    <?php } ?>
     </div>
     <div class="col-8 card-body">
- 
+    <?php if ($buy_text) { ?>
+        <div id="alert_div" class="alert <?php echo $alert_class ?> alert-dismissible fade show" role="alert">
+        <?php echo $buy_text; ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+    <?php } ?>
         <div>
-            <img <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_17d2cede93b%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_17d2cede93b%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2275.5%22%20y%3D%22104.8%22%3E200x200%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="..." class="img-thumbnail">
+            <img src="<?php echo $image; ?>" alt="" class="img-thumbnail img-responsive">
         </div>
         <div class="col-3 card-body"></div>
 
         <!-- 商品名稱 -->
-        <h2>商品名稱</h2>
+        <h2><?php echo display($pro['shop_name']); ?></h2>
         <!-- 商品價格 -->
-        <h3>NT$1200</h3>
-        <form>    
+        <h3>NT$<?php echo display($pro['shop_price']); ?></h3>
+        <form action="prod_detail.php?id=<?php echo $pid; ?>&cname=<?php echo urlencode($cname); ?>" method="post">
+        <?php if ($pro['shop_spec_mode'] == 1) { ?>
         <!-- 商品規格_start -->
+        <?php foreach ($specs as $spec_name => $items) { ?>
         <div class="form-group row">
-            <label for="exampleFormControlSelect1" class="col-sm-2 col-form-label">顏色</label>
+            <label for="exampleFormControlSelect1" class="col-sm-2 col-form-label"><?php echo display($spec_name); ?></label>
             <div class="col-sm-10">
                 <select class="form-control" id="exampleFormControlSelect1">
-                    <option value="op" selected>紅</option>
-                    <option value="op">綠</option>
-                    <option value="op">藍</option>
+                <?php foreach ($items as $item_key => $item) { ?>
+                    <option value="<?php echo $item_key; ?>"><?php echo display($item['item_name']); ?></option>
+                <?php } ?>
                 </select>
             </div>
         </div>
-
-        <div class="form-group row">
-            <label for="exampleFormControlSelect2" class="col-sm-2 col-form-label">尺寸</label>
-            <div class="col-sm-10">
-                <select class="form-control" id="exampleFormControlSelect2">
-                    <option value="op" selected>大</option>
-                    <option value="op">中</option>
-                    <option value="op">小</option>
-                </select>
-            </div>
-        </div>
+        <?php } ?>
         <!-- 商品規格_end -->
-
+        <?php } ?>
+        <?php if ($buy_flag) { ?>
         <!-- 購買數量_start -->
         <div class="form-group row">
             <label for="exampleFormControlSelect3" class="col-sm-2 col-form-label">購買數量</label>
             <div class="col-sm-10">
-                <select class="form-control" id="exampleFormControlSelect3">
-                    <option value="op" selected>1</option>
-                    <option value="op">2</option>
-                    <option value="op">3</option>
+                <select class="form-control" id="buycount" name="buycount">
+                    <?php for ($i=1; $i<=$option_count; $i++) { ?>
+                        <?php if ($i == $buycount) { ?>
+                        <option value="<?php echo $i; ?>" selected><?php echo $i; ?></option>
+                        <?php } else { ?>
+                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <?php } ?>
+                    <?php } ?>
                 </select>
             </div>
         </div>
         <!-- 購買數量_end -->
-
         <button style="margin-top:20px" type="submit" class="btn btn-primary">購買</button>
+        <?php } else { ?>
+        <button style="margin-top:20px" type="button" class="btn btn-secondary" disabled>已售完</button>
+        <?php } ?>
         </form>
 
     </div>
-</div>
 
+</div>
 <?php include_once("include/footer.php"); ?>
+
+
+
+
