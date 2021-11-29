@@ -3,6 +3,10 @@ include_once("include/session.php");
 include_once("function/common.php");
 include_once("class/order.php");
 
+if (!isset($_SESSION['mid'])) {
+  header("Location: login.php");
+}
+
 $order = new Order();
 $orders = $order->getOrderByMemberId($_SESSION['mid']);
 ?>

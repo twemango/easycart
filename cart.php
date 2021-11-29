@@ -7,7 +7,8 @@ include_once('class/pagination.php');
 
 $product = new Product();
 $order = new Order();
-
+//$categories = $product->getCategories();
+//echo '<pre>categories'.print_r($categories, 1).'</pre>';
 //echo '<pre>sess'.print_r($_SESSION, 1).'</pre>';
 //echo '<pre>_POST'.print_r($_POST, 1).'</pre>';
 
@@ -56,7 +57,7 @@ if (isset($_SESSION['cart'])) {
 
             unset($_SESSION['order_price']);
             unset($_SESSION['cart']);
-            echo '<script>alert("結帳成功"); parent.location.href="member_order_detail.php";</script>';
+            echo '<script>alert("結帳成功"); parent.location.href="member_order_list.php";</script>';
             return;
         }
 
@@ -65,7 +66,8 @@ if (isset($_SESSION['cart'])) {
             //$_SESSION['cart'][1]['count'] = 5;
             $_SESSION['cart'][$sel_count[0]]['count'] = $sel_count[1];
         }
-        if (!empty($_POST['del_id'])) {
+        
+        if ($_POST['del_id'] != '') {
             $del_id = (int)$_POST['del_id'];
             unset($_SESSION['cart'][$del_id]);
         }
@@ -104,6 +106,7 @@ if (isset($_SESSION['cart'])) {
 }
 
 //echo '<pre>sess'.print_r($_SESSION, 1).'</pre>';
+
 
 ?>
 

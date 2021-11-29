@@ -20,7 +20,6 @@
                 <a class="text-white" href="index.php">首頁</a>
                 <a class="text-white" href="prod_class.php">商品</a>
                 <a class="text-white" href="cart.php">購物車</a>
-                <a class="text-white" href="member_order_list.php">會員-訂單</a>
             </div>
             <div class="col-4 card-body text-right">
                 <?php if (!isset($_SESSION['uid'])) { ?>

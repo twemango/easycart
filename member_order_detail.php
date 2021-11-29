@@ -4,6 +4,10 @@ include_once("function/common.php");
 include_once("class/order.php");
 include_once("class/product.php");
 
+if (!isset($_SESSION['mid'])) {
+  header("Location: login.php");
+}
+
 $order = new Order();
 $product = new Product();
 $order_details = $order->getOrderDetailByOrderId($_SESSION['mid'], $_GET['id']);
