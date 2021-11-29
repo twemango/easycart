@@ -205,7 +205,7 @@ Class Product
     
     
     /**
-     * 新增分類
+     * 新增商品
      *
      * @return bool
      */
@@ -216,7 +216,7 @@ Class Product
     }
     
     /**
-     * 修改分類
+     * 修改商品
      *
      * @return int
      */
@@ -225,9 +225,20 @@ Class Product
         $product['id'] = $product_id;
         return $this->db->query("UPDATE finder_transaction_commodity SET member_id=:member_id, shop_name=:shop_name, shop_spec_mode=:shop_spec_mode, shop_price=:shop_price, shop_stock=:shop_stock, category_id=:category_id, shop_display=:shop_display, commodity_spec=:commodity_spec, commodity_price=:commodity_price, shop_image='', shop_brief='', updataDate=NOW(), createDate=NOW() WHERE id=:id", $product);
     }
+
+    /**
+     * 修改商品數量
+     *
+     * @return int
+     */
+    public function editProductStock($product_id, $product)
+    {
+        $product['id'] = $product_id;
+        return $this->db->query("UPDATE finder_transaction_commodity SET shop_stock=:shop_stock, updataDate=NOW() WHERE id=:id", $product);
+    }
     
     /**
-     * 刪除分類
+     * 刪除商品
      *
      * @return void
      */

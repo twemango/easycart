@@ -1,5 +1,12 @@
-<?php include_once("include/header.php"); ?>
+<?php 
+include_once("include/session.php");
+include_once("function/common.php");
+include_once("class/order.php");
 
+$order = new Order();
+$orders = $order->getOrderByMemberId($_SESSION['mid']);
+?>
+<?php include_once("include/header.php"); ?>
 <div class="row">
   <div class="col-3" style="padding:20px">
     <?php include_once("include/member_menu.php"); ?>
@@ -17,37 +24,17 @@
         </tr>
       </thead>
       <tbody>
+        <?php foreach ($orders as $key => $val) { ++$key ?>
         <tr>
-          <th scope="row">1</th>
-          <td>order001</td>
-          <td>$8000</td>
-          <td>2021-10-11 19:27:14</td>
-          <td><a href="member_order_detail.php">訂單明細</a></td>
+          <th scope="row"><?php echo $key; ?></th>
+          <td><?php echo display($val['order_No']); ?></td>
+          <td><?php echo display($val['amount']); ?></td>
+          <td><?php echo $val['createDate']; ?></td>
+          <td><a href="member_order_detail.php?id=<?php echo $val['id']; ?>">訂單明細</a></td>
         </tr>
-
-        <tr>
-          <th scope="row">2</th>
-          <td>order001</td>
-          <td>$8000</td>
-          <td>2021-10-11 19:27:14</td>
-          <td><a href="member_order_detail.php">訂單明細</a></td>
-        </tr>
-
-        <tr>
-          <th scope="row">3</th>
-          <td>order001</td>
-          <td>$8000</td>
-          <td>2021-10-11 19:27:14</td>
-          <td><a href="member_order_detail.php">訂單明細</a></td>
-        </tr>
-
+        <?php } ?>
       </tbody>
     </table>
-
   </div>
 </div>
-
-
-
-
 <?php include_once("include/footer.php"); ?>

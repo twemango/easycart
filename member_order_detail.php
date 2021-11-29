@@ -1,5 +1,14 @@
-<?php include_once("include/header.php"); ?>
+<?php 
+include_once("include/session.php");
+include_once("function/common.php");
+include_once("class/order.php");
+include_once("class/product.php");
 
+$order = new Order();
+$product = new Product();
+$order_details = $order->getOrderDetailByOrderId($_SESSION['mid'], $_GET['id']);
+?>
+<?php include_once("include/header.php"); ?>
 <div class="row">
   <div class="col-3" style="padding:20px">
     <?php include_once("include/member_menu.php"); ?>
@@ -17,34 +26,21 @@
         </tr>
       </thead>
       <tbody>
+        <?php 
+          foreach ($order_details as $key => $val) { 
+          $product_data = $product->getProduct($val['commodity_id']);
+          ++$key;
+        ?>
         <tr>
-          <th scope="row">1</th>
-          <td>pro_x</td>
-          <td>5</td>
-          <td>1000</td>
+          <th scope="row"><?php echo $key; ?></th>
+          <td><?php echo display($product_data['shop_name']); ?></td>
+          <td><?php echo display($val['qty']); ?></td>
+          <td><?php echo display($val['price']); ?></td>
         </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>pro_x</td>
-          <td>5</td>
-          <td>1000</td>
-        </tr>    
-        <tr>
-          <th scope="row">3</th>
-          <td>pro_x</td>
-          <td>5</td>
-          <td>1000</td>
-        </tr>
-
+        <?php } ?>
       </tbody>
     </table>
-
     <input style="margin:20px 0 20px 0" class="btn btn-primary" type="button" value="返回" onclick="window.history.back();">
-
   </div>
 </div>
-
-
-
-
 <?php include_once("include/footer.php"); ?>
