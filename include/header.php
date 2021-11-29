@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="style.css">
 
         <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-        <script src="http://code.jquery.com/jquery.js"></script>
+        <script src="js/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
 

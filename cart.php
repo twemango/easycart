@@ -173,19 +173,14 @@ if (isset($_SESSION['cart'])) {
     <p>購物車無商品</p>
 <?php } ?>
 </div>
-<script language="javascript">
-
+<script>
 function delete_product(del_key) {
     $("#del_id").val(del_key);
     $("#form1").submit();
 }
-
 function select_count(key, val) {
     $("#sel_count").val(key + ',' + val);
     $("#form1").submit();
 }
-
-
-
 </script>
 <?php include_once("include/footer.php"); ?>
