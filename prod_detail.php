@@ -74,11 +74,6 @@ if ($categories) {
             $total_buycount = $buycount;
             $newpro_flag = True;
 
-            //$specs = $product->getProductSpec($pid);
-            //$pro['spec'] = $product->getProductSpec($pid);
-            //echo '<pre>pro'.print_r($pro, 1).'</pre>';//exit;
-            //$specs = $product->getProductSpec($pid);
-
             if (isset($_SESSION['cart'])) {
                 foreach ($_SESSION['cart'] as $key => $val) {
                     if ($val['id'] == $pid) {
@@ -130,29 +125,15 @@ if ($categories) {
     }
     /* 購物按鈕判斷(商品規格:單一種類)_end */
 
-    if (isImage('upload/images/' . $pro['shop_image'])) {
-        $image = 'upload/images/' . $pro['shop_image'];
-    } else {
-        $image = 'images/no_image.png';
+    $image = 'images/no_image.png';
+    if (!empty($pro['shop_image'])) {
+        if (isImage('upload/images/' . $pro['shop_image'])) {
+            $image = 'upload/images/' . $pro['shop_image'];
+        }
     }
 
     $specs = $product->getProductSpec($pid);
-    //echo '<pre>product_spec'.print_r($pro['spec'], 1).'</pre>';exit;
-/*
-    if (isset($pro['spec'])) {
-        $order_spec = 0;
-        foreach ($pro['spec'] as $key => $val) {
-            
-            if ($val['order_spec'] == $order_spec) { // 同規格
-                // 相同商品數量相加
-                $total_buycount += $val['count'];
-                $newpro_flag = False;
-                break;
-            }
-            $order_spec = $val['order_spec'];
-        }
-    }
-*/
+
     //echo '<pre>sess'.print_r($_SESSION, 1).'</pre>';
 }
 

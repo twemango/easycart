@@ -31,7 +31,7 @@ if (isset($_GET['pageSize'])) {
 
 $product_arr = $product->getAllProducts($page, $page_size, $member_id);
 //echo '<pre>product_arr'.print_r($product_arr).'</pre>';
-$product_count = $product->getProductsCount($member_id);
+$product_count = $product->getProductsCount(0, -1, $member_id);
 
 if ($product_arr) {
     $page = new Pagination($product_count, $page_size);

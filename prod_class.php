@@ -59,11 +59,12 @@ if ($category_arr) {
     <?php } ?>
     </div>
     <div class="col-8 card-body">
-    <?php foreach ($product_arr as $pro) { 
-        if (isImage('upload/images/' . $pro['shop_image'])) {
-            $image = 'upload/images/' . $pro['shop_image'];
-        } else {
-            $image = 'images/no_image.png';
+    <?php foreach ($product_arr as $pro) {
+        $image = 'images/no_image.png';
+        if (!empty($pro['shop_image'])) {
+            if (isImage('upload/images/' . $pro['shop_image'])) {
+                $image = 'upload/images/' . $pro['shop_image'];
+            }
         }
     ?>
         <!-- 商品列表_start -->

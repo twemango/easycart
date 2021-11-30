@@ -54,7 +54,6 @@ function getRequest($name) {
     }
 }
 
-
 function checkRequestLength($field_name, $min_len, $max_len) {
     $value = getRequest($field_name);
     if (!(mb_strlen($value, "utf-8")>=$min_len && mb_strlen($value, "utf-8")<=$max_len)) {
@@ -87,7 +86,6 @@ function checkRequestSet($field_name, $set) {
     return '';
 }
 
-
 $error = False;
 $error_text = '';
 
@@ -95,6 +93,27 @@ $product_id = getRequest('product_id');
 $pro = null;
 
 $product = new Product();
+
+if (!empty($_FILES["file"]["name"])) {
+	if ((($_FILES["file"]["type"] == "image/png") || ($_FILES["file"]["type"] == "image/jpg") || ($_FILES["file"]["type"] == "image/jpeg")
+	) 
+	//&& ($_FILES["file"]["size"] < 100000) //Approx. 100kb files can be uploaded
+		 ) {
+		if ($_FILES["file"]["error"] > 0) {
+			echo "Return Code: " . $_FILES["file"]["error"];
+		} else {
+			if (file_exists('upload/images/' . $_FILES["file"]["name"])) {
+				echo $_FILES["file"]["name"] . " already exists.";
+			} else {
+				$sourcePath = $_FILES['file']['tmp_name'];
+				$targetPath = 'upload/images/' . $_FILES['file']['name'];
+				move_uploaded_file($sourcePath, $targetPath);
+			}
+		}
+	} else {
+		echo "圖片格式錯誤，圖片必須為jpeg、png、jpg";
+	}
+}
 
 if (isset($_REQUEST['shop_name'])) {
     
@@ -117,6 +136,17 @@ if (isset($_REQUEST['shop_name'])) {
             "commodity_spec"=>"[]",
             "commodity_price"=>"[]"
         );
+
+        $shop_image = 'no_image.png';
+        if (!empty($_FILES["file"]["name"])) {
+          $shop_image = $_FILES["file"]["name"];
+        } else {
+          if (!empty($product_id)) {
+            $pro2 = $product->getProductById($product_id);
+            $shop_image = $pro2["shop_image"];
+          }
+        }
+        $new_data["shop_image"] = $shop_image;
         
         if (empty($product_id)) {
             $product->addProduct($new_data);
@@ -128,13 +158,16 @@ if (isset($_REQUEST['shop_name'])) {
     }
 }
 
-
+$image = 'images/no_image.png';
 if (!empty($product_id)) {
     $pro = $product->getProductById($product_id);
-
+    if (!empty($pro['shop_image'])) {
+        if (isImage('upload/images/' . $pro['shop_image'])) {
+          $image = 'upload/images/' . $pro['shop_image'];
+        }
+    }
 }
 $category_arr = $product->getAllCategories(-1, -1, $member_id);
-
 
 $commodity_spec = json_decode($pro['commodity_spec'], true);
 $commodity_spec = is_null($commodity_spec)?array():$commodity_spec;
@@ -142,7 +175,6 @@ $commodity_price = json_decode($pro['commodity_price'], true);
 $commodity_price = is_null($commodity_price)?array():$commodity_price;
 
 //print_r($commodity_spec);
-
 
 function countSize($commodity_spec, $start=0) {
     $all_size = 0;
@@ -182,13 +214,9 @@ for ($i=0; $i<$size_commodity_spec; $i++) {
     }
 }
 
-//echo '<pre>';
-//print_r($commodity_spec_flat);
-//echo '</pre>';
-
-
 ?>
 <?php include_once("include/header.php"); ?>
+<script src="js/ajax_upload_image.js"></script>
 
 <div class="row">
   <div class="col-3" style="padding:20px">
@@ -197,7 +225,7 @@ for ($i=0; $i<$size_commodity_spec; $i++) {
   <div class="col-9" style="padding:20px">
     <h5 style="margin-bottom:20px"><b>會員-商品</b></h5>
     
-    <form method="post">
+    <form id="" action="" method="post" enctype="multipart/form-data">
     
       <?php if (!empty($error_text)) { ?>
       <div class="alert alert-danger" role="alert">
@@ -267,97 +295,7 @@ for ($i=0; $i<$size_commodity_spec; $i++) {
       </div>
       <!-- 商品類型單一種類_end -->
 
-
-    
-      <div class="form-group row">
-        <label class="col-sm-2 col-form-label">商品規格</label>
-        <div class="col-sm-10">
-          <div class="">
-            <?php foreach ($commodity_spec as $spec) { ?>
-                <div class="" style="margin-bottom:5px">
-                    <div class="" style="margin-bottom:5px">
-                        規格名稱：<input type="text" class="form-control" style="width:10rem; display:inline-block;" placeholder="" name="shop_name" value="<?php echo display($spec['spec_name']); ?>">
-                    </div>
-                    <div class="">
-                        <div style="margin-left:3rem">
-                            <?php foreach ($spec['items'] as $item) { ?>
-                                <div style="margin-bottom:5px">
-                                    項目名稱：<input type="text" class="form-control" style="width:8rem; display:inline-block;" placeholder="" name="shop_name" value="<?php echo display($item); ?>">
-                                </div>
-                            <?php } ?>
-                        </div>
-                    </div>
-                </div>
-            <?php } ?>
-          </div>
-        </div>
-      </div>
-
-
-
-      <!-- 商品規格多規格_start -->
       <!--
-      <div class="form-group row">
-        <label for="formGroupExampleInput" class="col-sm-2 col-form-label">主規格名稱</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" id="formGroupExampleInput" placeholder="">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="formGroupExampleInput" class="col-sm-2 col-form-label">主規格項目</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" id="formGroupExampleInput" placeholder="">
-        </div>
-      </div>
-
-      <div class="form-group row">
-        <label for="formGroupExampleInput" class="col-sm-2 col-form-label">副規格名稱</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" id="formGroupExampleInput" placeholder="">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="formGroupExampleInput" class="col-sm-2 col-form-label">副規格項目</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" id="formGroupExampleInput" placeholder="">
-        </div>
-      </div>
-      -->
-
-      <div class="form-group row">
-        <label for="formGroupExampleInput" class="col-sm-2 col-form-label">商品設定</label>
-        <div class="col-sm-10">
-          
-          <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <?php foreach ($commodity_spec as $spec) { ?>
-                  <th scope="col-1"><?php echo display($spec['spec_name']); ?></th>
-                <?php } ?>
-                <th scope="col-md-auto">價格</th>
-                <th scope="col-md-auto">庫存</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($commodity_spec_flat as $spec_flat) { ?>
-                <tr x="<?php echo count($commodity_spec); ?>">
-                  <?php for ($j=0; $j<count($commodity_spec); $j++) { ?>
-                    <td><?php echo display($spec_flat[$j]); ?></td>
-                  <?php } ?>
-                  <td><input type="text" class="form-control" id="formGroupExampleInput" placeholder=""></td>
-                  <td><input type="text" class="form-control" id="formGroupExampleInput" placeholder=""></td>
-                </tr>
-              <?php } ?>
-            </tbody>
-          </table>
-
-        </div>
-      </div>
-
-      <!-- 商品規格多規格_end -->
-
-      <!--
-
       <div class="form-group row">
         <label for="formGroupExampleInput" class="col-sm-2 col-form-label">安全庫存量</label>
         <div class="col-sm-10">
@@ -415,12 +353,12 @@ for ($i=0; $i<$size_commodity_spec; $i++) {
           </select>
         </div>
       </div>
-
+      
       <div class="form-group row">
         <label for="exampleFormControlFile1" class="col-sm-2 col-form-label">商品圖片</label>
         <div class="col-sm-10">
-          <input type="file" class="form-control-file" id="exampleFormControlFile1">
-          <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_17d2cede93b%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_17d2cede93b%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2275.5%22%20y%3D%22104.8%22%3E200x200%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" class="figure-img img-fluid rounded" alt="...">
+          <input type="file" class="form-control-file" name="file" id="file">
+          <div id="image_preview" class="mt-2"><img id="previewing" src="<?php echo $image; ?>" class="figure-img img-fluid rounded" style="width:250px;" /></div>
         </div>
       </div>
 

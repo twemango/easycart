@@ -48,7 +48,7 @@ Class Order
     public function getOrderByMemberId($member_id)
     {
         $this->db->bindMore(array("member_id"=>$member_id));
-        $orders = $this->db->query("SELECT * FROM finder_transaction_order WHERE buyer_id = :member_id");
+        $orders = $this->db->query("SELECT * FROM finder_transaction_order WHERE buyer_id = :member_id ORDER BY id DESC");
         return $orders;
     }
 

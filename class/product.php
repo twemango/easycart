@@ -198,11 +198,12 @@ Class Product
                 if ($q_str!='') $q_str .= ' AND ';
                 $q_str .= ' member_id=:member_id ';
             }
-            $product_count = $this->db->query("SELECT COUNT(id) count FROM finder_transaction_commodity WHERE " . $q_str, $q);
+
+            $sql = "SELECT COUNT(id) count FROM finder_transaction_commodity WHERE " . $q_str;
+            $product_count = $this->db->query($sql, $q);
             return $product_count[0]['count'];
         }
     }
-    
     
     /**
      * 新增商品
@@ -211,7 +212,7 @@ Class Product
      */
     public function addProduct($product)
     {
-        $insert = $this->db->query("INSERT INTO finder_transaction_commodity(member_id,shop_name,shop_spec_mode,shop_price,shop_stock,category_id,shop_display,commodity_spec,commodity_price,shop_image,shop_brief,updataDate,createDate) VALUES(:member_id,:shop_name,:shop_spec_mode,:shop_price,:shop_stock,:category_id,:shop_display,:commodity_spec,:commodity_price,'','',NOW(),NOW())", $product);
+        $insert = $this->db->query("INSERT INTO finder_transaction_commodity(member_id,shop_name,shop_spec_mode,shop_price,shop_stock,category_id,shop_display,commodity_spec,commodity_price,shop_image,shop_brief,updataDate,createDate) VALUES(:member_id,:shop_name,:shop_spec_mode,:shop_price,:shop_stock,:category_id,:shop_display,:commodity_spec,:commodity_price,:shop_image,'',NOW(),NOW())", $product);
         return ($insert > 0);
     }
     
@@ -223,7 +224,7 @@ Class Product
     public function editProduct($product_id, $product)
     {
         $product['id'] = $product_id;
-        return $this->db->query("UPDATE finder_transaction_commodity SET member_id=:member_id, shop_name=:shop_name, shop_spec_mode=:shop_spec_mode, shop_price=:shop_price, shop_stock=:shop_stock, category_id=:category_id, shop_display=:shop_display, commodity_spec=:commodity_spec, commodity_price=:commodity_price, shop_image='', shop_brief='', updataDate=NOW(), createDate=NOW() WHERE id=:id", $product);
+        return $this->db->query("UPDATE finder_transaction_commodity SET member_id=:member_id, shop_name=:shop_name, shop_spec_mode=:shop_spec_mode, shop_price=:shop_price, shop_stock=:shop_stock, category_id=:category_id, shop_display=:shop_display, commodity_spec=:commodity_spec, commodity_price=:commodity_price, shop_image=:shop_image, shop_brief='', updataDate=NOW(), createDate=NOW() WHERE id=:id", $product);
     }
 
     /**
@@ -306,7 +307,7 @@ Class Product
     {
         $this->db->bindMore(array("cname"=>$cname, "rows"=>$page_size, "offset"=>($page-1) * $page_size));
         //$product_arr = $this->db->query("SELECT id, shop_price, shop_name, shop_image  FROM finder_transaction_commodity WHERE category_id = :cid AND shop_display = 1 LIMIT :offset, :rows");
-        $product_arr = $this->db->query("SELECT p.id, p.shop_price, p.shop_name, p.shop_image FROM finder_transaction_commodity p LEFT JOIN finder_transaction_commodity_category c ON p.category_id = c.id WHERE c.name = :cname AND p.shop_display = 1 LIMIT :offset, :rows");
+        $product_arr = $this->db->query("SELECT p.id, p.shop_price, p.shop_name, p.shop_image FROM finder_transaction_commodity p LEFT JOIN finder_transaction_commodity_category c ON p.category_id = c.id WHERE c.name = :cname AND p.shop_display = 1 ORDER BY p.id DESC LIMIT :offset, :rows");
         
         return $product_arr;
     }
